@@ -1,0 +1,219 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Ein einfacher Verteiler- und Schaltschrankplaner für GitHub Pages.">
+  <title>Schaltschrank-Planer</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">GitHub-Pages-Prototyp</p>
+      <h1>Schaltschrank-Planer</h1>
+      <p class="subtitle">Verteiler auswählen, Geräte einplanen und Stromkreise dokumentieren.</p>
+    </div>
+    <div class="header-actions">
+      <button id="saveBtn" class="secondary">Speichern</button>
+      <button id="printBtn" class="secondary">Drucken / PDF</button>
+      <button id="exportBtn">JSON exportieren</button>
+    </div>
+  </header>
+
+  <main class="app-shell">
+    <aside class="sidebar">
+      <section class="panel">
+        <h2>1. Verteiler</h2>
+
+        <label for="cabinetPreset">Bauform</label>
+        <select id="cabinetPreset">
+          <option value="2x12">2-reihig · 24 TE</option>
+          <option value="3x12">3-reihig · 36 TE</option>
+          <option value="4x12">4-reihig · 48 TE</option>
+          <option value="5x12" selected>5-reihig · 60 TE</option>
+          <option value="custom">Benutzerdefiniert</option>
+        </select>
+
+        <div class="two-columns">
+          <div>
+            <label for="rowCount">Reihen</label>
+            <input id="rowCount" type="number" min="1" max="20" step="1" value="5">
+          </div>
+          <div>
+            <label for="tePerRow">TE je Reihe</label>
+            <input id="tePerRow" type="number" min="1" max="36" step="0.5" value="12">
+          </div>
+        </div>
+
+        <label for="cabinetName">Bezeichnung</label>
+        <input id="cabinetName" type="text" value="Unterverteilung" maxlength="80">
+
+        <button id="applyCabinetBtn" class="full-width">Verteiler übernehmen</button>
+      </section>
+
+      <section class="panel">
+        <h2>2. Gerät hinzufügen</h2>
+
+        <label for="deviceType">Gerät</label>
+        <select id="deviceType">
+          <option value="fi" data-label="FI / RCD" data-width="4">FI / RCD · 4 TE</option>
+          <option value="ls" data-label="Automat C16 L+N" data-width="1.5">Automat C16 L+N · 1,5 TE</option>
+          <option value="main" data-label="Hauptschalter" data-width="4">Hauptschalter · 4 TE</option>
+          <option value="surge" data-label="Überspannungsschutz" data-width="4">Überspannungsschutz · 4 TE</option>
+          <option value="contactor" data-label="Schütz" data-width="2">Schütz · 2 TE</option>
+          <option value="reserve" data-label="Reserve" data-width="1">Reserve · 1 TE</option>
+          <option value="custom" data-label="Eigenes Gerät" data-width="1">Eigenes Gerät</option>
+        </select>
+
+        <div class="two-columns">
+          <div>
+            <label for="deviceLabel">Bezeichnung</label>
+            <input id="deviceLabel" type="text" value="FI / RCD" maxlength="80">
+          </div>
+          <div>
+            <label for="deviceWidth">Breite in TE</label>
+            <input id="deviceWidth" type="number" min="0.5" max="24" step="0.5" value="4">
+          </div>
+        </div>
+
+        <div class="two-columns">
+          <div>
+            <label for="targetRow">Zielreihe</label>
+            <select id="targetRow"></select>
+          </div>
+          <div>
+            <label for="circuitNumber">Stromkreis</label>
+            <input id="circuitNumber" type="text" placeholder="z. B. F1, Q1" maxlength="30">
+          </div>
+        </div>
+
+        <label for="deviceFunction">Aufgabe / Funktion</label>
+        <input id="deviceFunction" type="text" placeholder="z. B. Fehlerstromschutz Bad" maxlength="120">
+
+        <label for="connectedLoad">Was ist angeschlossen?</label>
+        <input id="connectedLoad" type="text" placeholder="z. B. Steckdosen Küche" maxlength="120">
+
+        <label for="deviceNote">Notiz</label>
+        <textarea id="deviceNote" rows="2" placeholder="Kabel, Phase, Besonderheiten …" maxlength="300"></textarea>
+
+        <button id="addDeviceBtn" class="full-width">Gerät einplanen</button>
+        <p class="hint">Die hinterlegten TE-Werte sind Vorlagen. Bitte immer das Datenblatt des konkreten Geräts prüfen.</p>
+      </section>
+
+      <section class="panel compact">
+        <h2>Projektdatei</h2>
+        <label class="file-button">
+          JSON importieren
+          <input id="importInput" type="file" accept="application/json">
+        </label>
+        <button id="clearBtn" class="danger full-width">Plan leeren</button>
+      </section>
+    </aside>
+
+    <section class="workspace">
+      <section class="overview">
+        <div>
+          <p class="eyebrow">Aktueller Plan</p>
+          <h2 id="planTitle">Unterverteilung</h2>
+        </div>
+        <div class="metrics">
+          <div class="metric">
+            <span>Gesamt</span>
+            <strong id="totalTe">60 TE</strong>
+          </div>
+          <div class="metric">
+            <span>Belegt</span>
+            <strong id="usedTe">0 TE</strong>
+          </div>
+          <div class="metric">
+            <span>Frei</span>
+            <strong id="freeTe">60 TE</strong>
+          </div>
+        </div>
+      </section>
+
+      <div id="warningBox" class="warning hidden" role="status"></div>
+
+      <section id="cabinet" class="cabinet" aria-label="Verteileransicht"></section>
+
+      <section class="panel circuit-list">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Dokumentation</p>
+            <h2>Stromkreis- und Geräteliste</h2>
+          </div>
+          <input id="searchInput" type="search" placeholder="Suchen …" aria-label="Geräte durchsuchen">
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Reihe</th>
+                <th>Stromkreis</th>
+                <th>Gerät</th>
+                <th>TE</th>
+                <th>Funktion</th>
+                <th>Angeschlossen</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="deviceTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </section>
+  </main>
+
+  <dialog id="editDialog">
+    <form method="dialog" id="editForm">
+      <div class="dialog-heading">
+        <h2>Gerät bearbeiten</h2>
+        <button value="cancel" class="icon-button" aria-label="Dialog schließen">×</button>
+      </div>
+      <input id="editId" type="hidden">
+
+      <label for="editLabel">Bezeichnung</label>
+      <input id="editLabel" type="text" maxlength="80" required>
+
+      <div class="two-columns">
+        <div>
+          <label for="editWidth">Breite in TE</label>
+          <input id="editWidth" type="number" min="0.5" max="24" step="0.5" required>
+        </div>
+        <div>
+          <label for="editRow">Reihe</label>
+          <select id="editRow"></select>
+        </div>
+      </div>
+
+      <label for="editCircuit">Stromkreis</label>
+      <input id="editCircuit" type="text" maxlength="30">
+
+      <label for="editFunction">Aufgabe / Funktion</label>
+      <input id="editFunction" type="text" maxlength="120">
+
+      <label for="editConnected">Was ist angeschlossen?</label>
+      <input id="editConnected" type="text" maxlength="120">
+
+      <label for="editNote">Notiz</label>
+      <textarea id="editNote" rows="3" maxlength="300"></textarea>
+
+      <div class="dialog-actions">
+        <button value="cancel" class="secondary">Abbrechen</button>
+        <button id="saveEditBtn" value="default">Änderungen speichern</button>
+      </div>
+    </form>
+  </dialog>
+
+  <template id="emptyStateTemplate">
+    <div class="empty-state">
+      <strong>Noch keine Geräte eingeplant.</strong>
+      <span>Füge links ein Gerät hinzu.</span>
+    </div>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>
