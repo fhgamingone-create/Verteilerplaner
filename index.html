@@ -57,17 +57,19 @@
 
         <label for="deviceType">Gerät</label>
         <select id="deviceType">
-          <option value="fi" data-label="FI / RCD" data-width="4">FI / RCD · 4 TE</option>
-          <option value="c13-1n" data-kind="ls" data-label="Automat C13 1+N" data-width="1.5">Automat C13 1+N · 1,5 TE</option>
-          <option value="c16-1n" data-kind="ls" data-label="Automat C16 1+N" data-width="1.5">Automat C16 1+N · 1,5 TE</option>
-          <option value="c13" data-kind="ls" data-label="Automat C13" data-width="1">Automat C13 · 1 TE</option>
-          <option value="c16" data-kind="ls" data-label="Automat C16" data-width="1">Automat C16 · 1 TE</option>
-          <option value="c16-3p" data-kind="ls" data-label="Automat C16 3-polig" data-width="3">Automat C16 3-polig · 3 TE</option>
-          <option value="main" data-label="Hauptschalter" data-width="4">Hauptschalter · 4 TE</option>
-          <option value="surge" data-label="Überspannungsschutz" data-width="4">Überspannungsschutz · 4 TE</option>
-          <option value="contactor" data-label="Schütz" data-width="2">Schütz · 2 TE</option>
-          <option value="reserve" data-label="Reserve" data-width="1">Reserve · 1 TE</option>
-          <option value="custom" data-label="Eigenes Gerät" data-width="1">Eigenes Gerät</option>
+          <option value="fi" data-label="FI / RCD" data-width="4" data-unit="te">FI / RCD · 4 TE</option>
+          <option value="c13-1n" data-kind="ls" data-label="Automat C13 1+N" data-width="1.5" data-unit="te">Automat C13 1+N · 1,5 TE</option>
+          <option value="c16-1n" data-kind="ls" data-label="Automat C16 1+N" data-width="1.5" data-unit="te">Automat C16 1+N · 1,5 TE</option>
+          <option value="c13" data-kind="ls" data-label="Automat C13" data-width="1" data-unit="te">Automat C13 · 1 TE</option>
+          <option value="c16" data-kind="ls" data-label="Automat C16" data-width="1" data-unit="te">Automat C16 · 1 TE</option>
+          <option value="c16-3p" data-kind="ls" data-label="Automat C16 3-polig" data-width="3" data-unit="te">Automat C16 3-polig · 3 TE</option>
+          <option value="phoenix-pt25-twin" data-kind="terminal" data-label="Phoenix PT 2,5-TWIN Klemme" data-width="5" data-unit="mm">Phoenix PT 2,5-TWIN Klemme · 5 mm</option>
+          <option value="shelly" data-kind="shelly" data-label="Shelly" data-width="1" data-unit="te">Shelly · 1 TE</option>
+          <option value="main" data-label="Hauptschalter" data-width="4" data-unit="te">Hauptschalter · 4 TE</option>
+          <option value="surge" data-label="Überspannungsschutz" data-width="4" data-unit="te">Überspannungsschutz · 4 TE</option>
+          <option value="contactor" data-label="Schütz" data-width="2" data-unit="te">Schütz · 2 TE</option>
+          <option value="reserve" data-label="Reserve" data-width="1" data-unit="te">Reserve · 1 TE</option>
+          <option value="custom" data-label="Eigenes Gerät" data-width="1" data-unit="te">Eigenes Gerät</option>
         </select>
 
         <div class="two-columns">
@@ -76,8 +78,14 @@
             <input id="deviceLabel" type="text" value="FI / RCD" maxlength="80">
           </div>
           <div>
-            <label for="deviceWidth">Breite in TE</label>
-            <input id="deviceWidth" type="number" min="0.5" max="24" step="0.5" value="4">
+            <label for="deviceWidth">Breite</label>
+            <div class="width-input-group">
+              <input id="deviceWidth" type="number" min="0.5" max="24" step="0.5" value="4">
+              <select id="deviceWidthUnit" aria-label="Einheit der Gerätebreite">
+                <option value="te" selected>TE</option>
+                <option value="mm">mm</option>
+              </select>
+            </div>
           </div>
         </div>
 
@@ -102,7 +110,7 @@
         <textarea id="deviceNote" rows="2" placeholder="Kabel, Phase, Besonderheiten …" maxlength="300"></textarea>
 
         <button id="addDeviceBtn" class="full-width">Gerät einplanen</button>
-        <p class="hint">Die hinterlegten TE-Werte sind Vorlagen. Bitte immer das Datenblatt des konkreten Geräts prüfen.</p>
+        <p class="hint">1 TE = 18 mm. Klemmen werden millimetergenau berechnet. Bitte immer das Datenblatt des konkreten Geräts prüfen.</p>
       </section>
 
       <section class="panel compact">
@@ -157,7 +165,7 @@
                 <th>Reihe</th>
                 <th>Stromkreis</th>
                 <th>Gerät</th>
-                <th>TE</th>
+                <th>Breite</th>
                 <th>Funktion</th>
                 <th>Angeschlossen</th>
                 <th></th>
@@ -183,8 +191,14 @@
 
       <div class="two-columns">
         <div>
-          <label for="editWidth">Breite in TE</label>
-          <input id="editWidth" type="number" min="0.5" max="24" step="0.5" required>
+          <label for="editWidth">Breite</label>
+          <div class="width-input-group">
+            <input id="editWidth" type="number" min="0.5" max="24" step="0.5" required>
+            <select id="editWidthUnit" aria-label="Einheit der Gerätebreite">
+              <option value="te">TE</option>
+              <option value="mm">mm</option>
+            </select>
+          </div>
         </div>
         <div>
           <label for="editRow">Reihe</label>
@@ -218,6 +232,6 @@
     </div>
   </template>
 
-  <script src="app.js"></script>
+  <script src="app.js?v=20260719-1"></script>
 </body>
 </html>
