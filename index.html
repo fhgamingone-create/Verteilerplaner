@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Ein einfacher Verteiler- und Schaltschrankplaner für GitHub Pages.">
   <title>Schaltschrank-Planer</title>
-  <link rel="stylesheet" href="styles.css?v=2.3.1">
+  <link rel="stylesheet" href="styles.css?v=2.4.1">
 </head>
 <body>
   <header class="app-header">
@@ -176,10 +176,10 @@
   </main>
 
   <dialog id="editDialog">
-    <form method="dialog" id="editForm">
+    <form id="editForm">
       <div class="dialog-heading">
         <h2>Gerät bearbeiten</h2>
-        <button value="cancel" class="icon-button" aria-label="Dialog schließen">×</button>
+        <button id="closeEditBtn" type="button" class="icon-button" aria-label="Dialog schließen">×</button>
       </div>
       <input id="editId" type="hidden">
 
@@ -212,8 +212,8 @@
       <div class="dialog-actions">
         <button id="deleteEditBtn" type="button" class="danger dialog-delete">Gerät löschen</button>
         <div class="dialog-actions-right">
-          <button value="cancel" class="secondary">Abbrechen</button>
-          <button id="saveEditBtn" value="default">Änderungen speichern</button>
+          <button id="cancelEditBtn" type="button" class="secondary">Abbrechen</button>
+          <button id="saveEditBtn" type="submit">Änderungen speichern</button>
         </div>
       </div>
     </form>
@@ -226,6 +226,6 @@
     </div>
   </template>
 
-  <script src="app.js?v=2.4.0"></script>
+  <script src="app.js?v=2.4.1"></script>
 </body>
 </html>
