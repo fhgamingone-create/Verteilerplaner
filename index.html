@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Ein einfacher Verteiler- und Schaltschrankplaner für GitHub Pages.">
   <title>Schaltschrank-Planer</title>
-  <link rel="stylesheet" href="styles.css?v=2.1.1">
+  <link rel="stylesheet" href="styles.css?v=2.3.1">
 </head>
 <body>
   <header class="app-header">
@@ -13,7 +13,7 @@
       <p class="eyebrow">GitHub-Pages-Prototyp</p>
       <div class="title-line">
         <h1>Schaltschrank-Planer</h1>
-        <span id="appVersion" class="version-badge">Version 2.3.0</span>
+        <span id="appVersion" class="version-badge">Version 2.4.0</span>
       </div>
       <p class="subtitle">Verteiler auswählen, Geräte einplanen und Stromkreise dokumentieren.</p>
     </div>
@@ -210,8 +210,11 @@
       <textarea id="editNote" rows="3" maxlength="300"></textarea>
 
       <div class="dialog-actions">
-        <button value="cancel" class="secondary">Abbrechen</button>
-        <button id="saveEditBtn" value="default">Änderungen speichern</button>
+        <button id="deleteEditBtn" type="button" class="danger dialog-delete">Gerät löschen</button>
+        <div class="dialog-actions-right">
+          <button value="cancel" class="secondary">Abbrechen</button>
+          <button id="saveEditBtn" value="default">Änderungen speichern</button>
+        </div>
       </div>
     </form>
   </dialog>
@@ -223,6 +226,6 @@
     </div>
   </template>
 
-  <script src="app.js?v=2.3.0"></script>
+  <script src="app.js?v=2.4.0"></script>
 </body>
 </html>
